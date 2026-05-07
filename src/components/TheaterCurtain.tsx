@@ -29,7 +29,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Confetti state
   const [confetti, setConfetti] = useState<Confetti[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -49,11 +49,11 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
     };
 
     setStableHeight();
-    
+
     // Only update on orientation change, not on scroll
-    window.addEventListener('orientationchange', setStableHeight);
-    
-    return () => window.removeEventListener('orientationchange', setStableHeight);
+    window.addEventListener("orientationchange", setStableHeight);
+
+    return () => window.removeEventListener("orientationchange", setStableHeight);
   }, []);
 
   // Handle initial video load without auto-play issues
@@ -61,12 +61,12 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
     if (videoRef.current && !videoError) {
       // Set video to first frame but don't autoplay
       videoRef.current.load();
-      
+
       // Mark initial load as complete after a short delay
       const timer = setTimeout(() => {
         setIsInitialLoad(false);
       }, 500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [videoError]);
@@ -80,12 +80,12 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
   // Function to create and show confetti
   const triggerConfetti = useCallback(() => {
     setShowConfetti(true);
-    
+
     // Create confetti pieces
     const pieces: Confetti[] = [];
     const colors = ["#FFD700", "#FFC125", "#FFDF00", "#FFE55C", "#FFEA70", "#FFF4A3"];
     const shapes = ["circle", "diamond", "star", "square"];
-    
+
     for (let i = 0; i < 200; i++) {
       pieces.push({
         id: i,
@@ -98,28 +98,28 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
         shape: shapes[Math.floor(Math.random() * shapes.length)],
       });
     }
-    
+
     setConfetti(pieces);
   }, []);
 
   const handleClick = useCallback(() => {
     if (phase !== "closed") return;
-    
+
     // Start opening
     setPhase("opening");
-    
+
     // Trigger confetti immediately on click (when video starts)
     triggerConfetti();
-    
+
     if (videoRef.current && !videoError) {
-      videoRef.current.play().catch(error => {
+      videoRef.current.play().catch((error) => {
         console.log("Video play failed:", error);
       });
     }
-    
+
     // Show content after delay
     setTimeout(() => setShowContent(true), 800);
-    
+
     // Call onOpen prop if provided
     onOpen?.();
   }, [phase, onOpen, videoError, triggerConfetti]);
@@ -139,7 +139,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
   useEffect(() => {
     if (phase === "open") {
       requestAnimationFrame(() => setShowContent(true));
-      
+
       const timer = setTimeout(() => {
         setShowConfetti(false);
         setConfetti([]);
@@ -151,7 +151,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
 
   // Pre-load the image to ensure it's ready
   const [imageLoaded, setImageLoaded] = useState(false);
-  
+
   useEffect(() => {
     const img = new Image();
     img.onload = () => setImageLoaded(true);
@@ -163,10 +163,10 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
       ref={containerRef}
       className="relative w-full cursor-pointer overflow-hidden"
       onClick={handleClick}
-      style={{ 
-        height: '100vh',
-        position: 'relative',
-        backgroundColor: '#000',
+      style={{
+        height: "100vh",
+        position: "relative",
+        backgroundColor: "#000",
       }}
     >
       {/* Video - shows during closed and opening phases */}
@@ -183,9 +183,9 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
           onTimeUpdate={handleTimeUpdate}
           onError={handleVideoError}
           style={{
-            objectFit: 'cover',
-            width: '100%',
-            height: '100%',
+            objectFit: "cover",
+            width: "100%",
+            height: "100%",
           }}
         />
       )}
@@ -213,7 +213,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             opacity: imageLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease-in-out',
+            transition: "opacity 0.3s ease-in-out",
           }}
         />
       )}
@@ -224,21 +224,20 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
           <p
             className="text-xs sm:text-sm md:text-base lg:text-lg tracking-widest uppercase animate-pulse px-4 text-center"
             style={{
-              color: "hsl(45, 80%, 70%)",
+              color: "hsl(0, 0%, 0%)",
               textShadow: "0 2px 10px rgba(0,0,0,0.8)",
               fontFamily: "'Georgia', serif",
-              letterSpacing: '0.2em',
+              letterSpacing: "0.2em",
             }}
           >
-            Tap to open 
+            Tap to open
           </p>
         </div>
       )}
 
       {/* Loading state */}
       {phase === "closed" && isInitialLoad && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" />
       )}
 
       {/* Invitation Content */}
@@ -246,13 +245,13 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
         <motion.div
           className="absolute inset-0 z-50 flex items-center justify-center"
           initial={{ opacity: 0 }}
-          animate={{ 
+          animate={{
             opacity: showContent ? 1 : 0,
-            y: currentPage && currentPage > 0 ? "-100vh" : 0
+            y: currentPage && currentPage > 0 ? "-100vh" : 0,
           }}
-          transition={{ 
+          transition={{
             opacity: { duration: 1.2, delay: 0.4, ease: "easeOut" },
-            y: { duration: 1.6, ease: [0.25, 0.1, 0.25, 1] }
+            y: { duration: 1.6, ease: [0.25, 0.1, 0.25, 1] },
           }}
         >
           <div className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-6 md:px-8 py-2 sm:py-12 md:py-16 text-center w-full">
@@ -263,7 +262,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
               animate={showContent ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.9 }}
             >
-              <p 
+              <p
                 className="pt-44 font-serif-elegant text-[12px] xs:text-[9px] sm:text-[10px] md:text-xs lg:text-sm tracking-[0.2em] xs:tracking-[0.22em] sm:tracking-[0.25em] md:tracking-[0.3em] lg:tracking-[0.35em] text-gray-700 sm:text-muted-foreground leading-tight uppercase"
                 style={{
                   textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)",
@@ -271,7 +270,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
               >
                 THIS IS WHERE
               </p>
-              <p 
+              <p
                 className="font-serif-elegant text-[12px] xs:text-[9px] sm:text-[10px] md:text-xs lg:text-sm tracking-[0.2em] xs:tracking-[0.22em] sm:tracking-[0.25em] md:tracking-[0.3em] lg:tracking-[0.35em] text-gray-700 sm:text-muted-foreground leading-tight uppercase"
                 style={{
                   textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)",
@@ -281,66 +280,90 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
               </p>
             </motion.div>
 
-            {/* Names section */}
+            {/* ── NAMES SECTION ── */}
             <motion.div
-              className="flex flex-col items-center justify-center gap-0 w-full max-w-4xl mx-auto"
+              className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={showContent ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 1.1 }}
             >
-              {/* Kajal  AND Subham*/}
-              <motion.h1
-                className="text-[24px] xs:text-[20px] sm:text-[24px] md:text-[32px] lg:text-[42px] xl:text-[52px] 2xl:text-[62px] leading-tight md:leading-normal lg:leading-relaxed break-words max-w-full px-2 whitespace-nowrap md:whitespace-normal"
-                style={{ 
-                  fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
-                  color: '#2d2d2d',
-                  fontWeight: 400,
-                  letterSpacing: '0.03em',
-                  textShadow: "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
+              {/*
+               * Single inner wrapper — all three pieces (KAJAL, andImage, SUBHAM)
+               * are treated as ONE centered unit. No negative margins, no
+               * breakpoint classes that could misalign things.
+               */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={showContent ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
               >
-              KAJAL  
-              </motion.h1>
-
-              {/* "and" image */}
-              <motion.div
-                className="flex-shrink-0 relative z-10 -mb-2 xs:-mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 xl:-mb-10"
-                initial={{ opacity: 0 }}
-                animate={showContent ? { opacity: 1 } : {}}
-                transition={{ duration: 0.8, delay: 1.5 }}
-              >
-                <img 
-                  src={andImage} 
-                  alt="and" 
-                  className="w-20 xs:w-16 sm:w-20 md:w-28 lg:w-36 xl:w-44 2xl:w-52 h-auto object-contain mx-auto"
+                {/* KAJAL */}
+                <motion.h1
                   style={{
-                    filter: 'opacity(0.9) drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-                    display: 'block',
-                    visibility: 'visible',
+                    fontFamily:
+                      "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
+                    color: "#2d2d2d",
+                    fontWeight: 400,
+                    letterSpacing: "0.03em",
+                    textShadow:
+                      "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
+                    fontSize: "clamp(24px, 5vw, 62px)",
+                    margin: 0,
+                    lineHeight: 1.2,
                   }}
-                />
-              </motion.div>
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={showContent ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
+                >
+                  KAJAL
+                </motion.h1>
 
-              {/* ISHIKA AGARWAL */}
-              <motion.h1
-                className="text-[24px] xs:text-[20px] sm:text-[24px] md:text-[32px] lg:text-[42px] xl:text-[52px] 2xl:text-[62px] leading-tight md:leading-normal lg:leading-relaxed break-words max-w-full px-2 whitespace-nowrap md:whitespace-normal"
-                style={{ 
-                  fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
-                  color: '#2d2d2d',
-                  fontWeight: 400,
-                  letterSpacing: '0.03em',
-                  textShadow: "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
-                }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={showContent ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 1, delay: 1.7, ease: "easeOut" }}
-              >
-               SUBHAM
-              </motion.h1>
+                {/* "and" image — snug between the two names */}
+                <motion.div
+                  style={{ lineHeight: 0, margin: "-4px 0" }}
+                  initial={{ opacity: 0 }}
+                  animate={showContent ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.8, delay: 1.5 }}
+                >
+                  <img
+                    src={andImage}
+                    alt="and"
+                    style={{
+                      width: "clamp(80px, 10vw, 180px)",
+                      height: "auto",
+                      display: "block",
+                      filter:
+                        "opacity(0.9) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
+                    }}
+                  />
+                </motion.div>
+
+                {/* SUBHAM */}
+                <motion.h1
+                  style={{
+                    fontFamily:
+                      "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
+                    color: "#2d2d2d",
+                    fontWeight: 400,
+                    letterSpacing: "0.03em",
+                    textShadow:
+                      "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
+                    fontSize: "clamp(24px, 5vw, 62px)",
+                    margin: 0,
+                    lineHeight: 1.2,
+                  }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={showContent ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 1, delay: 1.7, ease: "easeOut" }}
+                >
+                  SUBHAM
+                </motion.h1>
+              </div>
             </motion.div>
+            {/* ── END NAMES SECTION ── */}
 
             {/* Save the Date - empty div */}
             <motion.div
@@ -352,28 +375,36 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
               {/* Empty */}
             </motion.div>
 
-            {/* Scroll Down Indicator - NEW: appears after content is shown */}
+            {/* Scroll Down Indicator */}
             <motion.div
               className="flex flex-col items-center pointer-events-none"
               initial={{ opacity: 0 }}
               animate={showContent ? { opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 2.5 }}
-              style={{ marginTop: '8px' }}
+              style={{ marginTop: "8px" }}
             >
               <span
                 style={{
-                  color: '#C9A86A',
+                  color: "#C9A86A",
                   fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
-                  fontSize: '10px',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
+                  fontSize: "10px",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
                   opacity: 0.85,
-                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                  textShadow: "0 2px 8px rgba(0,0,0,0.5)",
                 }}
               >
                 Scroll
               </span>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "2px",
+                  marginTop: "4px",
+                }}
+              >
                 {[0, 1, 2].map((i) => (
                   <svg
                     key={i}
@@ -383,10 +414,10 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     style={{
-                      animation: 'scrollBounce 1.5s ease-in-out infinite',
+                      animation: "scrollBounce 1.5s ease-in-out infinite",
                       animationDelay: `${i * 0.2}s`,
                       opacity: 0,
-                      filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+                      filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
                     }}
                   >
                     <path
@@ -422,14 +453,16 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
                 case "circle":
                   return { borderRadius: "50%" };
                 case "diamond":
-                  return { 
+                  return {
                     borderRadius: "0%",
                     transform: "rotate(45deg)",
-                    clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)"
+                    clipPath:
+                      "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
                   };
                 case "star":
                   return {
-                    clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"
+                    clipPath:
+                      "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
                   };
                 case "square":
                 default:
