@@ -10,7 +10,6 @@ interface TheaterCurtainProps {
   currentPage?: number;
 }
 
-// Confetti interface
 interface Confetti {
   id: number;
   x: number;
@@ -30,62 +29,56 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // ✅ Responsive line-height: 19px on mobile (<768px), 44px on desktop
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const nameLineHeight = isMobile ? '19px' : '44px';
+
   // Confetti state
   const [confetti, setConfetti] = useState<Confetti[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Preload the open curtain image immediately
   useEffect(() => {
     const img = new Image();
     img.src = curtainOpenImage;
   }, []);
 
-  // FIXED: Use stable height approach - no fluctuations
   useEffect(() => {
     const setStableHeight = () => {
       if (containerRef.current) {
         containerRef.current.style.height = `${window.innerHeight}px`;
       }
     };
-
     setStableHeight();
-
-    // Only update on orientation change, not on scroll
-    window.addEventListener("orientationchange", setStableHeight);
-
-    return () => window.removeEventListener("orientationchange", setStableHeight);
+    window.addEventListener('orientationchange', setStableHeight);
+    return () => window.removeEventListener('orientationchange', setStableHeight);
   }, []);
 
-  // Handle initial video load without auto-play issues
   useEffect(() => {
     if (videoRef.current && !videoError) {
-      // Set video to first frame but don't autoplay
       videoRef.current.load();
-
-      // Mark initial load as complete after a short delay
-      const timer = setTimeout(() => {
-        setIsInitialLoad(false);
-      }, 500);
-
+      const timer = setTimeout(() => setIsInitialLoad(false), 500);
       return () => clearTimeout(timer);
     }
   }, [videoError]);
 
   const handleVideoError = useCallback(() => {
-    console.log("Video failed to load");
     setVideoError(true);
     setIsInitialLoad(false);
   }, []);
 
-  // Function to create and show confetti
   const triggerConfetti = useCallback(() => {
     setShowConfetti(true);
-
-    // Create confetti pieces
     const pieces: Confetti[] = [];
     const colors = ["#FFD700", "#FFC125", "#FFDF00", "#FFE55C", "#FFEA70", "#FFF4A3"];
     const shapes = ["circle", "diamond", "star", "square"];
-
     for (let i = 0; i < 200; i++) {
       pieces.push({
         id: i,
@@ -98,60 +91,40 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
         shape: shapes[Math.floor(Math.random() * shapes.length)],
       });
     }
-
     setConfetti(pieces);
   }, []);
 
   const handleClick = useCallback(() => {
     if (phase !== "closed") return;
-
-    // Start opening
     setPhase("opening");
-
-    // Trigger confetti immediately on click (when video starts)
     triggerConfetti();
-
     if (videoRef.current && !videoError) {
-      videoRef.current.play().catch((error) => {
-        console.log("Video play failed:", error);
-      });
+      videoRef.current.play().catch(() => {});
     }
-
-    // Show content after delay
     setTimeout(() => setShowContent(true), 800);
-
-    // Call onOpen prop if provided
     onOpen?.();
   }, [phase, onOpen, videoError, triggerConfetti]);
 
   const handleTimeUpdate = useCallback(() => {
     const video = videoRef.current;
     if (!video || phase !== "opening") return;
-    if (video.duration - video.currentTime < 0.3) {
-      setPhase("open");
-    }
+    if (video.duration - video.currentTime < 0.3) setPhase("open");
   }, [phase]);
 
-  const handleVideoEnd = useCallback(() => {
-    setPhase("open");
-  }, []);
+  const handleVideoEnd = useCallback(() => setPhase("open"), []);
 
   useEffect(() => {
     if (phase === "open") {
       requestAnimationFrame(() => setShowContent(true));
-
       const timer = setTimeout(() => {
         setShowConfetti(false);
         setConfetti([]);
       }, 5000);
-
       return () => clearTimeout(timer);
     }
   }, [phase]);
 
-  // Pre-load the image to ensure it's ready
   const [imageLoaded, setImageLoaded] = useState(false);
-
   useEffect(() => {
     const img = new Image();
     img.onload = () => setImageLoaded(true);
@@ -163,13 +136,9 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
       ref={containerRef}
       className="relative w-full cursor-pointer overflow-hidden"
       onClick={handleClick}
-      style={{
-        height: "100vh",
-        position: "relative",
-        backgroundColor: "#000",
-      }}
+      style={{ height: '100vh', position: 'relative', backgroundColor: '#000' }}
     >
-      {/* Video - shows during closed and opening phases */}
+      {/* Video */}
       {(phase === "closed" || phase === "opening") && !videoError && (
         <video
           ref={videoRef}
@@ -182,15 +151,11 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
           onEnded={handleVideoEnd}
           onTimeUpdate={handleTimeUpdate}
           onError={handleVideoError}
-          style={{
-            objectFit: "cover",
-            width: "100%",
-            height: "100%",
-          }}
+          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
         />
       )}
 
-      {/* Fallback curtain image if video fails */}
+      {/* Fallback image */}
       {(phase === "closed" || phase === "opening") && videoError && (
         <div
           className="absolute inset-0 w-full h-full"
@@ -203,7 +168,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
         />
       )}
 
-      {/* Static open curtain image - shows when fully open */}
+      {/* Open curtain image */}
       {phase === "open" && (
         <div
           className="absolute inset-0 w-full h-full"
@@ -213,21 +178,21 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             opacity: imageLoaded ? 1 : 0,
-            transition: "opacity 0.3s ease-in-out",
+            transition: 'opacity 0.3s ease-in-out',
           }}
         />
       )}
 
-      {/* CLICK ANYWHERE TO OPEN text - shown only when closed */}
+      {/* Tap to open */}
       {phase === "closed" && !isInitialLoad && (
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
           <p
             className="text-xs sm:text-sm md:text-base lg:text-lg tracking-widest uppercase animate-pulse px-4 text-center"
             style={{
-              color: "hsl(0, 0%, 0%)",
+              color: "(0,0,0)",
               textShadow: "0 2px 10px rgba(0,0,0,0.8)",
               fontFamily: "'Georgia', serif",
-              letterSpacing: "0.2em",
+              letterSpacing: '0.2em',
             }}
           >
             Tap to open
@@ -264,108 +229,83 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
             >
               <p
                 className="pt-44 font-serif-elegant text-[12px] xs:text-[9px] sm:text-[10px] md:text-xs lg:text-sm tracking-[0.2em] xs:tracking-[0.22em] sm:tracking-[0.25em] md:tracking-[0.3em] lg:tracking-[0.35em] text-gray-700 sm:text-muted-foreground leading-tight uppercase"
-                style={{
-                  textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)",
-                }}
+                style={{ textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)" }}
               >
                 THIS IS WHERE
               </p>
               <p
                 className="font-serif-elegant text-[12px] xs:text-[9px] sm:text-[10px] md:text-xs lg:text-sm tracking-[0.2em] xs:tracking-[0.22em] sm:tracking-[0.25em] md:tracking-[0.3em] lg:tracking-[0.35em] text-gray-700 sm:text-muted-foreground leading-tight uppercase"
-                style={{
-                  textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)",
-                }}
+                style={{ textShadow: "0 2px 8px rgba(255,255,255,0.8), 0 2px 12px rgba(0,0,0,0.5)" }}
               >
                 OUR FOREVER BEGINS.
               </p>
             </motion.div>
 
-            {/* ── NAMES SECTION ── */}
+            {/* Names section */}
             <motion.div
-              className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto"
+              className="flex flex-col items-center justify-center gap-0 w-full max-w-4xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={showContent ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 1.1 }}
             >
-              {/*
-               * Single inner wrapper — all three pieces (KAJAL, andImage, SUBHAM)
-               * are treated as ONE centered unit. No negative margins, no
-               * breakpoint classes that could misalign things.
-               */}
-              <div
+              {/* ✅ KAJAL — lineHeight: 19px mobile / 44px desktop */}
+              <motion.h1
+                className="text-[24px] xs:text-[20px] sm:text-[24px] md:text-[32px] lg:text-[42px] xl:text-[52px] 2xl:text-[62px] leading-tight md:leading-normal lg:leading-relaxed break-words max-w-full px-2 whitespace-nowrap md:whitespace-normal"
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
+                  color: '#2d2d2d',
+                  fontWeight: 400,
+                  letterSpacing: '0.03em',
+                  lineHeight: nameLineHeight,
+                  textShadow: "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
                 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={showContent ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
               >
-                {/* KAJAL */}
-                <motion.h1
-                  style={{
-                    fontFamily:
-                      "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
-                    color: "#2d2d2d",
-                    fontWeight: 400,
-                    letterSpacing: "0.03em",
-                    textShadow:
-                      "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
-                    fontSize: "clamp(24px, 5vw, 62px)",
-                    margin: 0,
-                    lineHeight: 1.2,
-                  }}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={showContent ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
-                >
-                  KAJAL
-                </motion.h1>
+                KAJAL
+              </motion.h1>
 
-                {/* "and" image — snug between the two names */}
-                <motion.div
-                  style={{ lineHeight: 0, margin: "-4px 0" }}
-                  initial={{ opacity: 0 }}
-                  animate={showContent ? { opacity: 1 } : {}}
-                  transition={{ duration: 0.8, delay: 1.5 }}
-                >
-                  <img
-                    src={andImage}
-                    alt="and"
-                    style={{
-                      width: "clamp(80px, 10vw, 180px)",
-                      height: "auto",
-                      display: "block",
-                      filter:
-                        "opacity(0.9) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
-                    }}
-                  />
-                </motion.div>
-
-                {/* SUBHAM */}
-                <motion.h1
+              {/* "and" image */}
+              <motion.div
+                className="flex-shrink-0 relative z-10 -mb-2 xs:-mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 xl:-mb-10"
+                style={{ paddingLeft: '19px' }}
+                initial={{ opacity: 0 }}
+                animate={showContent ? { opacity: 1 } : {}}
+                transition={{ duration: 0.8, delay: 1.5 }}
+              >
+                <img
+                  src={andImage}
+                  alt="and"
+                  className="w-20 xs:w-16 sm:w-20 md:w-28 lg:w-36 xl:w-44 2xl:w-52 h-auto object-contain mx-auto"
                   style={{
-                    fontFamily:
-                      "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
-                    color: "#2d2d2d",
-                    fontWeight: 400,
-                    letterSpacing: "0.03em",
-                    textShadow:
-                      "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
-                    fontSize: "clamp(24px, 5vw, 62px)",
-                    margin: 0,
-                    lineHeight: 1.2,
+                    filter: 'opacity(0.9) drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                    display: 'block',
+                    visibility: 'visible',
                   }}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={showContent ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 1, delay: 1.7, ease: "easeOut" }}
-                >
-                  SUBHAM
-                </motion.h1>
-              </div>
+                />
+              </motion.div>
+
+              {/* ✅ SUBHAM — lineHeight: 19px mobile / 44px desktop */}
+              <motion.h1
+                className="text-[24px] xs:text-[20px] sm:text-[24px] md:text-[32px] lg:text-[42px] xl:text-[52px] 2xl:text-[62px] leading-tight md:leading-normal lg:leading-relaxed break-words max-w-full px-2 whitespace-nowrap md:whitespace-normal"
+                style={{
+                  fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Libre Baskerville', serif",
+                  color: '#2d2d2d',
+                  fontWeight: 400,
+                  letterSpacing: '0.03em',
+                  lineHeight: nameLineHeight,
+                  textShadow: "0 2px 10px rgba(255,255,255,0.9), 0 4px 15px rgba(0,0,0,0.4)",
+                }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={showContent ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 1, delay: 1.7, ease: "easeOut" }}
+              >
+                SUBHAM
+              </motion.h1>
             </motion.div>
-            {/* ── END NAMES SECTION ── */}
 
-            {/* Save the Date - empty div */}
+            {/* Save the Date */}
             <motion.div
               className="mt-4 xs:mt-5 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-12"
               initial={{ opacity: 0, y: 20 }}
@@ -381,30 +321,22 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
               initial={{ opacity: 0 }}
               animate={showContent ? { opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 2.5 }}
-              style={{ marginTop: "8px" }}
+              style={{ marginTop: '8px' }}
             >
               <span
                 style={{
-                  color: "#C9A86A",
+                  color: '#C9A86A',
                   fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
-                  fontSize: "10px",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
+                  fontSize: '10px',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
                   opacity: 0.85,
-                  textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                 }}
               >
                 Scroll
               </span>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "2px",
-                  marginTop: "4px",
-                }}
-              >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', marginTop: '4px' }}>
                 {[0, 1, 2].map((i) => (
                   <svg
                     key={i}
@@ -414,10 +346,10 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     style={{
-                      animation: "scrollBounce 1.5s ease-in-out infinite",
+                      animation: 'scrollBounce 1.5s ease-in-out infinite',
                       animationDelay: `${i * 0.2}s`,
                       opacity: 0,
-                      filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
+                      filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
                     }}
                   >
                     <path
@@ -435,7 +367,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
         </motion.div>
       )}
 
-      {/* Keyframe animation for scroll indicator */}
+      {/* Scroll bounce keyframe */}
       <style>{`
         @keyframes scrollBounce {
           0%   { opacity: 0; transform: translateY(-4px); }
@@ -450,23 +382,10 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
           {confetti.map((piece) => {
             const getShapeStyle = () => {
               switch (piece.shape) {
-                case "circle":
-                  return { borderRadius: "50%" };
-                case "diamond":
-                  return {
-                    borderRadius: "0%",
-                    transform: "rotate(45deg)",
-                    clipPath:
-                      "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-                  };
-                case "star":
-                  return {
-                    clipPath:
-                      "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
-                  };
-                case "square":
-                default:
-                  return { borderRadius: "0%" };
+                case "circle": return { borderRadius: "50%" };
+                case "diamond": return { borderRadius: "0%", transform: "rotate(45deg)", clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" };
+                case "star": return { clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)" };
+                default: return { borderRadius: "0%" };
               }
             };
 
@@ -482,12 +401,7 @@ const TheaterCurtain = ({ isOpen = false, onOpen, currentPage = 0 }: TheaterCurt
                   boxShadow: `0 0 ${piece.size * 2}px ${piece.color}`,
                   ...getShapeStyle(),
                 }}
-                initial={{
-                  y: piece.y,
-                  rotate: 0,
-                  opacity: 1,
-                  scale: 0,
-                }}
+                initial={{ y: piece.y, rotate: 0, opacity: 1, scale: 0 }}
                 animate={{
                   y: ["0vh", "120vh"],
                   rotate: [0, piece.rotation * 3, piece.rotation * 6],
