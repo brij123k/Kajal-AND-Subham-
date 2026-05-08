@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import ScratchCard from '@/components/ScratchCard2';
 import saveTheDateImage from '@/assets/save thedate.png';
+import backgroundImage from '@/assets/Group 1.png';
 import CountdownPage from "../components/Countdownpage";
 
 interface Confetti {
@@ -49,7 +50,6 @@ const Home = () => {
     }, 5000);
   }, []);
 
-  // Called when each individual heart is fully scratched
   const handleHeartComplete = useCallback(() => {
     setCompletedCount(prev => {
       const newCount = prev + 1;
@@ -85,9 +85,18 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start bg-white relative overflow-hidden w-full py-8 sm:py-12 md:py-16">
+    <div
+      className="flex flex-col items-center justify-start relative overflow-hidden w-full py-8 sm:py-12 md:py-16"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       {/* Save the Date Image */}
-      <div className="z-10 mb-12 sm:mb-8 md:mb-12">
+      <div className="z-10 mb-4 sm:mb-5 md:mb-6">
         <img 
           src={saveTheDateImage} 
           alt="Save the Date" 
@@ -261,7 +270,7 @@ const Home = () => {
         <CountdownPage/>
       </div>
 
-      {/* Full-screen falling confetti — fires only when all 3 hearts are scratched */}
+      {/* Full-screen falling confetti */}
       {showConfetti && (
         <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
           {confetti.map((piece) => (
