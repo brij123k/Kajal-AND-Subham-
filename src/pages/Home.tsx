@@ -155,7 +155,7 @@ const Home = () => {
         </div>
 
         {/* ===================== SECTION 1: SCRATCH CARDS ===================== */}
-        <div className="flex flex-col items-center w-full py-2 sm:py-3 md:py-4">
+        <div className="flex flex-col items-center w-full py-24 sm:py-36 md:py-48">
 
           {/* Three scratch card hearts */}
           <div className="flex gap-1.5 sm:gap-2 md:gap-3 items-center justify-center mb-1.5 sm:mb-2">
@@ -309,8 +309,10 @@ const Home = () => {
           </div>
         </div>
 
+
+
         {/* ===================== SECTION 2: COUNTDOWN + VENUE ===================== */}
-        <div className="flex flex-col items-center w-full px-0 md:px-8 lg:px-16 pt-0.5 pb-3">
+       <div className="flex flex-col items-center w-full px-0 md:px-8 lg:px-16 pt-1.5 pb-9">
 
           {/* Countdown Title */}
           <h3
@@ -319,7 +321,7 @@ const Home = () => {
               color: '#6B6B6B',
               fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
               fontWeight: 200,
-              lineHeight: '1.4',
+              lineHeight: '2',
             }}
           >
             COUNTDOWN
@@ -408,7 +410,7 @@ const Home = () => {
                 className="text-sm sm:text-base md:text-lg uppercase"
                 style={{ color: '#6B6B6B', fontFamily: "'Playfair Display', serif", fontWeight: 400, lineHeight: '1.2' }}
               >
-                SURAT
+                
               </p>
             </div>
 
