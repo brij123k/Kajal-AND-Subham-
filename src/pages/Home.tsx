@@ -155,7 +155,7 @@ const Home = () => {
         </div>
 
         {/* ===================== SECTION 1: SCRATCH CARDS ===================== */}
-        <div className="flex flex-col items-center w-full py-24 sm:py-36 md:py-48">
+        <div className="flex flex-col items-center w-full py-8 sm:py-12 md:py-16">
 
           {/* Three scratch card hearts */}
           <div className="flex gap-1.5 sm:gap-2 md:gap-3 items-center justify-center mb-1.5 sm:mb-2">
