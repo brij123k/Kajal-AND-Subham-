@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ScratchCard from '@/components/ScratchCard2';
 import saveTheDateImage from '@/assets/save thedate.png';
-import websiteBg from '@/assets/website.jpg.jpeg';
+import websiteBg from '@/assets/website.jpg (1).jpeg';
 
 interface Confetti {
   id: number;
@@ -99,22 +99,23 @@ const Home = () => {
       }}
     >
       {/* Background image */}
-      <img
-        src={websiteBg}
-        alt=""
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'fill',
-          objectPosition: 'top center',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
+{/* Background image */}
+<img
+  src={websiteBg}
+  alt=""
+  aria-hidden="true"
+  style={{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: 'auto',              // ✅ Let height follow the image naturally
+    objectFit: 'fill',
+    objectPosition: 'top center',
+    pointerEvents: 'none',
+    zIndex: 0,
+  }}
+/>
 
       {/* White overlay */}
       <div
@@ -309,115 +310,129 @@ const Home = () => {
           </div>
         </div>
 
+       {/* ===================== SECTION 2: COUNTDOWN + VENUE ===================== */}
+<div className="flex flex-col items-center w-full px-0 md:px-16 lg:px-20 pt-10 pb-12">
 
+  {/* Countdown Title */}
+  <h3
+    className="text-sm sm:text-base md:text-xl uppercase mb-3 sm:mb-4 px-4 md:px-0"
+    style={{
+      color: '#6B6B6B',
+      fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
+      fontWeight: 200,
+      lineHeight: '2',
+    }}
+  >
+    COUNTDOWN
+  </h3>
 
-        {/* ===================== SECTION 2: COUNTDOWN + VENUE ===================== */}
-       <div className="flex flex-col items-center w-full px-0 md:px-8 lg:px-16 pt-1.5 pb-9">
+  {/* Countdown Timer */}
+  <div className="flex gap-1.5 sm:gap-3 md:gap-5 mb-10 sm:mb-12 px-4 md:px-0">
 
-          {/* Countdown Title */}
-          <h3
-            className="text-sm sm:text-base md:text-xl uppercase mb-1.5 sm:mb-2 px-4 md:px-0"
-            style={{
-              color: '#6B6B6B',
-              fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
-              fontWeight: 200,
-              lineHeight: '2',
-            }}
-          >
-            COUNTDOWN
-          </h3>
+    <div className="flex flex-col items-center">
+      <div
+        className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
+        style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        {String(timeLeft.days).padStart(2, '0')}
+      </div>
+      <div
+        className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        Days
+      </div>
+    </div>
 
-          {/* Countdown Timer */}
-          <div className="flex gap-1.5 sm:gap-3 md:gap-5 mb-3 sm:mb-4 px-4 md:px-0">
+    <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
 
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
-                style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                {String(timeLeft.days).padStart(2, '0')}
-              </div>
-              <div
-                className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
-                style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                Days
-              </div>
-            </div>
+    <div className="flex flex-col items-center">
+      <div
+        className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
+        style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        {String(timeLeft.hours).padStart(2, '0')}
+      </div>
+      <div
+        className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        Hours
+      </div>
+    </div>
 
-            <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
+    <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
 
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
-                style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                {String(timeLeft.hours).padStart(2, '0')}
-              </div>
-              <div
-                className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
-                style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                Hours
-              </div>
-            </div>
+    <div className="flex flex-col items-center">
+      <div
+        className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
+        style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        {String(timeLeft.minutes).padStart(2, '0')}
+      </div>
+      <div
+        className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        Minutes
+      </div>
+    </div>
 
-            <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
+    <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
 
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
-                style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                {String(timeLeft.minutes).padStart(2, '0')}
-              </div>
-              <div
-                className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
-                style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                Minutes
-              </div>
-            </div>
+    <div className="flex flex-col items-center">
+      <div
+        className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
+        style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        {String(timeLeft.seconds).padStart(2, '0')}
+      </div>
+      <div
+        className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
+      >
+        Seconds
+      </div>
+    </div>
+  </div>
 
-            <div className="text-xl sm:text-2xl md:text-3xl font-light self-start" style={{ color: '#8A8A8A' }}>:</div>
+  {/* Venue Section */}
+  <div className="flex flex-col items-center w-full md:max-w-6xl mt-1">
+    <div className="text-center mb-8 px-4 md:px-0">
+      <p
+        className="text-[10px] sm:text-xs uppercase mb-1"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1.2' }}
+      >
+        VENUE:
+      </p>
+      <p
+        className="text-sm sm:text-base md:text-lg uppercase"
+        style={{ color: '#6B6B6B', fontFamily: "'Playfair Display', serif", fontWeight: 400, lineHeight: '1.2' }}
+      >
+        Surat
+      </p>
+    </div>
+<div className="text-center mt-6 px-4 md:px-0">
+      <p
+        className="text-[10px] sm:text-xs uppercase mb-1"
+        style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1.2' }}
+      >
+        Regards
+      </p>
+      <p
+        className="text-xs sm:text-sm md:text-base uppercase"
+        style={{ color: '#6B6B6B', fontFamily: "'Playfair Display', serif", fontWeight: 400, lineHeight: '1.2' }}
+      >
+        Kanodia & Neemani Family
+      </p>
+    </div>
+    {/* Spacer for couple illustration */}
+    <div style={{ height: '28vw', maxHeight: '340px', minHeight: '150px' }} />
 
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl sm:text-2xl md:text-3xl font-light mb-0.5"
-                style={{ color: '#4A4A4A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                {String(timeLeft.seconds).padStart(2, '0')}
-              </div>
-              <div
-                className="text-[7px] sm:text-[8px] md:text-[9px] uppercase"
-                style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1' }}
-              >
-                Seconds
-              </div>
-            </div>
-          </div>
-
-          {/* Venue Section */}
-          <div className="flex flex-col items-center w-full md:max-w-6xl mt-1">
-            <div className="text-center mb-2 px-4 md:px-0">
-              <p
-                className="text-[10px] sm:text-xs uppercase mb-0.5"
-                style={{ color: '#8A8A8A', fontFamily: "'Playfair Display', serif", lineHeight: '1.2' }}
-              >
-                VENUE:
-              </p>
-              <p
-                className="text-sm sm:text-base md:text-lg uppercase"
-                style={{ color: '#6B6B6B', fontFamily: "'Playfair Display', serif", fontWeight: 400, lineHeight: '1.2' }}
-              >
-                
-              </p>
-            </div>
-
-            {/* Spacer for couple illustration */}
-            <div style={{ height: '28vw', maxHeight: '340px', minHeight: '150px' }} />
-          </div>
-        </div>
+    {/* Regards - pushed below illustration */}
+    
+  </div>
+</div>
       </div>
 
       <style>{`
