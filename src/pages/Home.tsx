@@ -28,7 +28,9 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const targetDate = new Date(new Date().getTime() + 60 * 24 * 60 * 60 * 1000).getTime();
+    // ✅ Fixed wedding date — counts down to 7 July 2026 and NEVER resets on refresh.
+    // Change only this line if the date/time changes. Format: 'YYYY-MM-DDTHH:mm:ss' (local time).
+    const targetDate = new Date('2026-07-07T00:00:00').getTime();
     const updateCountdown = () => {
       const now = new Date().getTime();
       const difference = targetDate - now;
@@ -39,6 +41,8 @@ const Home = () => {
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
     updateCountdown();

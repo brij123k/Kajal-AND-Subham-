@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import venueImage from '@/assets/Layer 1 (1).png';
 
+// ✅ Fixed wedding date — counts down to 7 July 2026 and NEVER resets on refresh.
+// Change only this line if the date/time changes. Format: 'YYYY-MM-DDTHH:mm:ss' (local time).
+const WEDDING_DATE = new Date('2026-07-07T00:00:00').getTime();
+
 const CountdownPage = () => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -10,11 +14,9 @@ const CountdownPage = () => {
   });
 
   useEffect(() => {
-    const targetDate = new Date(new Date().getTime() + 60 * 24 * 60 * 60 * 1000).getTime();
-
     const updateCountdown = () => {
       const now = new Date().getTime();
-      const difference = targetDate - now;
+      const difference = WEDDING_DATE - now;
 
       if (difference > 0) {
         setTimeLeft({
@@ -23,6 +25,8 @@ const CountdownPage = () => {
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
 
