@@ -422,7 +422,7 @@ const Home = () => {
             className="text-xs sm:text-sm md:text-base uppercase text-center"
             style={{ color: '#6B6B6B', fontFamily: "'Playfair Display', serif", fontWeight: 700, lineHeight: '1.2' }}
           >
-            Kanodia &  NemaniFamily
+            Kanodia &  Nemani Family
           </p>
         </div>
 
